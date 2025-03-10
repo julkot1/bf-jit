@@ -24,16 +24,15 @@ int main()
     {
         INC_VAL_ASM(code, index);
     }
-
-    PRINT_ASM(code, index);
+    int8_t offset = 3 * INC_VAL_SIZE;
     INC_PTR_ASM(code, index);
-    for (int i= 0; i < 10; i++)
-    {
-        INC_VAL_ASM(code, index);
-    }
-    PRINT_ASM(code, index);
-    INPUT_ASM(code, index);
-    PRINT_ASM(code, index);
+    JUMP_COND_ASM(code, index, offset);
+    INC_VAL_ASM(code, index);
+    INC_VAL_ASM(code, index);
+    INC_VAL_ASM(code, index);
+    DEC_PTR_ASM(code, index);
+    INC_VAL_ASM(code, index);
+    INC_VAL_ASM(code, index);
 
     //ret
     code[index++]=0xc3;

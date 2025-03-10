@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall
 
-SRC = main.c
+SRC = main.c jit.c
 OBJ = $(SRC:.c=.o)
 
 TARGET = app

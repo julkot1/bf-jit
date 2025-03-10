@@ -53,8 +53,6 @@
     code[index++]=0x0f;\
     code[index++]=0x05;\
     code[index++]=0x5f;
-
-
 /*
  * push rdi
  * mov rsi, rdi
@@ -89,3 +87,26 @@
     code[index++]=0x05;\
     code[index++]=0x5f;
 
+// cmp [rdi], 0
+// je <offset>
+#define JUMP_COND_ASM(code, index, offset)\
+    code[index++] = 0x80;\
+    code[index++] = 0x3f;\
+    code[index++] = 0x00;\
+    code[index++] = 0x74;\
+    code[index++] = offset;
+
+// jmp <offset>
+#define JUMP_ASM(code, index, offset)\
+    code[index++]=0xeb;\
+    code[index++]=offset;
+
+
+#define INC_PTR_SIZE 3
+#define DEC_PTR_SIZE 3
+#define INC_VAL_SIZE 2
+#define DEC_VAL_SIZE 2
+#define PRINT_ASM_SIZE 23
+#define INPUT_SIZE 23
+#define JMP_SIZE 2
+#define JUMP_COND_SIZE 5
