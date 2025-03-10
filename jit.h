@@ -1,5 +1,10 @@
-#include <stdint.h>
-
+#ifndef JIT
+#define JIT
+#include <sys/mman.h>
+#include <string.h>
+#include <sys/types.h>
+#include <stdlib.h>
+#include "bf.h"
 //inc byte ptr [rdi]
 #define INC_VAL_ASM(code, index)\
     code[index++]=0xfe;\
@@ -106,7 +111,16 @@
 #define DEC_PTR_SIZE 3
 #define INC_VAL_SIZE 2
 #define DEC_VAL_SIZE 2
-#define PRINT_ASM_SIZE 23
+#define PRINT_SIZE 23
 #define INPUT_SIZE 23
 #define JMP_SIZE 2
-#define JUMP_COND_SIZE 5
+#define JMP_COND_SIZE 5
+
+
+typedef void (*bf_func)(char *);
+
+u_int8_t *generate_code(enum tokens *tokens, long size, long code_size);
+
+int run(u_int8_t *code, long code_size);
+
+#endif

@@ -1,10 +1,10 @@
 CC = gcc
 CFLAGS = -Wall
 
-SRC = main.c jit.c
+SRC = main.c jit.c bf.c
 OBJ = $(SRC:.c=.o)
 
-TARGET = app
+TARGET = bf
 
 all: $(TARGET)
 

@@ -1,61 +1,32 @@
-#include <stdatomic.h>
 #include <stdlib.h>
-#include <stdint.h>
 #include <sys/mman.h>
-#include <string.h>
 #include <sys/types.h>
 #include "jit.h"
 #include <stdio.h>
+#include "bf.h"
 
-
-
-
-// Function pointer type for JIT-generated function
-typedef void (*jit_func)(char *);
-
-#define SIZE 1024
-
-int main()
+int main(int argc, char *argv[])
 {
-    u_int8_t *code = (u_int8_t *)calloc(SIZE, sizeof(u_int8_t));
-    int index =0;
-
-    for (int i= 0; i < 65; i++)
-    {
-        INC_VAL_ASM(code, index);
-    }
-    int8_t offset = 3 * INC_VAL_SIZE;
-    INC_PTR_ASM(code, index);
-    JUMP_COND_ASM(code, index, offset);
-    INC_VAL_ASM(code, index);
-    INC_VAL_ASM(code, index);
-    INC_VAL_ASM(code, index);
-    DEC_PTR_ASM(code, index);
-    INC_VAL_ASM(code, index);
-    INC_VAL_ASM(code, index);
-
-    //ret
-    code[index++]=0xc3;
-
-
-    void *mem = mmap(NULL, SIZE, PROT_READ | PROT_WRITE | PROT_EXEC,
-                     MAP_ANON | MAP_PRIVATE, -1, 0);
-    if (mem == MAP_FAILED) {
-        perror("mmap failed");
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <file>\n", argv[0]);
         return 1;
     }
-    memcpy(mem, code, SIZE);
-    char c[]={0,0,0,0,0,0,0,0};
-    char *ptr = c;
+    char *filename = argv[1];
 
-    jit_func func = (jit_func)mem;
+    long size = 0;
+    long code_size = 0;
+    enum tokens *tokens = get_tokens(filename, &size, &code_size);
 
-    func(ptr);
-
-    for (int i = 0; i < 5; i++) {
-        printf("%d\n", c[i]);
+    if (tokens == NULL) {
+        fprintf(stderr, "Failed to read file %s\n", filename);
+        return 1;
     }
-    munmap(mem, SIZE);
+
+    u_int8_t *code = generate_code(tokens, size, code_size);
+    const int result = run(code, code_size);
+
+    free(tokens);
     free(code);
-    return 0;
+
+    return result;
 }
