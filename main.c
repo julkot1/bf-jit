@@ -13,24 +13,27 @@
 // Function pointer type for JIT-generated function
 typedef void (*jit_func)(char *);
 
-#define SIZE 512
+#define SIZE 1024
 
 int main()
 {
-    
-    u_int8_t *code = (u_int8_t *)calloc(512, sizeof(u_int8_t));
+    u_int8_t *code = (u_int8_t *)calloc(SIZE, sizeof(u_int8_t));
     int index =0;
 
-    INC_VAL_ASM(code, index);
-    INC_VAL_ASM(code, index);
+    for (int i= 0; i < 65; i++)
+    {
+        INC_VAL_ASM(code, index);
+    }
 
+    PRINT_ASM(code, index);
     INC_PTR_ASM(code, index);
-
-    INC_VAL_ASM(code, index);
-    INC_VAL_ASM(code, index);
-
-    DEC_PTR_ASM(code, index);
-    DEC_VAL_ASM(code, index);
+    for (int i= 0; i < 10; i++)
+    {
+        INC_VAL_ASM(code, index);
+    }
+    PRINT_ASM(code, index);
+    INPUT_ASM(code, index);
+    PRINT_ASM(code, index);
 
     //ret
     code[index++]=0xc3;
@@ -42,14 +45,10 @@ int main()
         perror("mmap failed");
         return 1;
     }
-
     memcpy(mem, code, SIZE);
     char c[]={0,0,0,0,0,0,0,0};
     char *ptr = c;
-    for (int i = 0; i < 5; i++) {
-        printf("%d\n", c[i]);
-    }
-    printf("----\n");
+
     jit_func func = (jit_func)mem;
 
     func(ptr);
@@ -57,7 +56,7 @@ int main()
     for (int i = 0; i < 5; i++) {
         printf("%d\n", c[i]);
     }
-    munmap(mem, sizeof(code));
-
+    munmap(mem, SIZE);
+    free(code);
     return 0;
 }
