@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall
+CFLAGS = -Wall -ggdb
 
 SRC = main.c jit.c bf.c
 OBJ = $(SRC:.c=.o)

@@ -17,5 +17,6 @@ enum tokens {
 };
 
 enum tokens *get_tokens(const char * filename, long *size, long *code_size);
+int get_token_size(int token);
 
 #endif

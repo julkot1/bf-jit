@@ -57,19 +57,14 @@ enum tokens *get_tokens(const char * filename, long *size, long *code_size)
   int index = 0;
   while( (token = fgetc(file)) != EOF)
   {
-     if (token == ' ' || token == '\n' || token == '\t' || token == '\r')
-     {
-       continue;
-     }
      enum tokens token_type = get_token(token);
 
-     if (token_type == bf_unknown)
+     if (token_type != bf_unknown)
      {
-       fprintf(stderr, "Unknown token: %c at index %d\n",token, index);
-       return NULL;
+       tokens[index++] = token_type;
+       *code_size += get_token_size(token);
      }
-     tokens[index++] = token_type;
-     *code_size += get_token_size(token);
+
   }
   *size = index;
 
